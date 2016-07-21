@@ -1,3 +1,5 @@
+//Hits Google Spread Sheet and Populates Name and Email of customers. Checks and stores credentials. 
+
 var fs = require('fs');
 var readline = require('readline');
 var google = require('googleapis');
@@ -18,7 +20,7 @@ fs.readFile('client_secret.json', function processClientSecrets(err, content) {
   }
   // Authorize a client with the loaded credentials, then call the
   // Google Sheets API.
-  authorize(JSON.parse(content), listMajors);
+  authorize(JSON.parse(content), listUsers);
 });
 
 /**
@@ -96,15 +98,15 @@ function storeToken(token) {
 }
 
 /**
- * Print the names and majors of students in a sample spreadsheet:
- * https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
+ * Print the name and email of all users on the spreadsheet :
+ * https://docs.google.com/spreadsheets/d/1spX08kRyRzqH_cLWzVHOpuRylOExe5ygeU4OLcLxKGY/edit
  */
-function listMajors(auth) {
+function listUsers(auth) {
   var sheets = google.sheets('v4');
   sheets.spreadsheets.values.get({
     auth: auth,
-    spreadsheetId: '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms',
-    range: 'Class Data!A2:E',
+    spreadsheetId: '1spX08kRyRzqH_cLWzVHOpuRylOExe5ygeU4OLcLxKGY',
+    range: 'User Data!A2:C',
   }, function(err, response) {
     if (err) {
       console.log('The API returned an error: ' + err);
@@ -114,12 +116,21 @@ function listMajors(auth) {
     if (rows.length == 0) {
       console.log('No data found.');
     } else {
-      console.log('Name, Major:');
+      console.log('Name, Email:');
       for (var i = 0; i < rows.length; i++) {
         var row = rows[i];
         // Print columns A and E, which correspond to indices 0 and 4.
-        console.log('%s, %s', row[0], row[4]);
+        console.log('%s, %s', row[1], row[2]);
       }
     }
   });
+}
+
+function checkNewUsers ( ) {
+  //Make a get request to check messages for any new users
+}
+
+function updateUsers ( ) {
+  //POST https://sheets.googleapis.com/v4/spreadsheets/spreadsheetId:batchUpdate
+  //Insert Row to sheet and
 }
